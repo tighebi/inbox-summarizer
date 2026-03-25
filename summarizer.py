@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 
 '''
 Takes the email dictionary and the API key as arguments. 
