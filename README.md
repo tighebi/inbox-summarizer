@@ -56,10 +56,14 @@ email:
   username: you@gmail.com
   password: your_app_password   # Gmail: use an App Password, not your real password
 
-llm:
-  provider: gemini
-  model: gemini-2.0-flash-lite
+gemini:
   api_key: YOUR_GEMINI_API_KEY
+```
+
+Then lock down the file so only you can read it:
+
+```bash
+chmod 600 config.yaml
 ```
 
 > **Gmail users:** You'll need to generate an [App Password](https://myaccount.google.com/apppasswords) — Gmail does not allow plain password authentication.
@@ -76,6 +80,16 @@ python main.py
 ### As a background service (recommended)
 
 **Linux (systemd)**
+
+Add these two lines to your `inbox-summarizer.service` file so the service can access your display:
+
+```ini
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=%h/.Xauthority"
+```
+
+Then install the service:
+
 ```bash
 cp inbox-summarizer.service ~/.config/systemd/user/
 systemctl --user enable inbox-summarizer
@@ -83,6 +97,16 @@ systemctl --user start inbox-summarizer
 ```
 
 **macOS (launchd)**
+
+Your `.plist` must include `LimitLoadToSessionType` set to `Aqua`, otherwise macOS will block the popup window from rendering:
+
+```xml
+<key>LimitLoadToSessionType</key>
+<string>Aqua</string>
+```
+
+Then load it:
+
 ```bash
 cp com.inboxsummarizer.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.inboxsummarizer.plist
@@ -95,7 +119,7 @@ Run the included setup script:
 python setup_windows_task.py
 ```
 
-This registers the process to start automatically on login via Task Scheduler.
+The task must be set to "Run only when user is logged on" — if set to run whether the user is logged on or not, Windows hides all GUI elements.
 
 ---
 

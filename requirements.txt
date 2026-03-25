@@ -1,0 +1,4 @@
+imapclient
+google-generativeai
+pyyaml
+beautifulsoup4
