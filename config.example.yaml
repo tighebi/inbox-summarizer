@@ -1,0 +1,8 @@
+email:
+  host: imap.gmail.com
+  port: 993
+  username: your@email.com
+  password: your_app_password # visit myaccount.google.com/apppasswords 
+
+gemini:
+  api_key: YOUR_GEMINI_API_KEY
