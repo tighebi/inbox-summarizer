@@ -1,4 +1,4 @@
 imapclient
-google-generativeai
+google-genai
 pyyaml
 beautifulsoup4
