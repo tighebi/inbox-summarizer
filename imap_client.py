@@ -44,9 +44,9 @@ def wait_for_new_email(client):
     client.store(uid, "+FLAGS", "\\Seen")
     
     # return {"uid": ..., "subject": ..., "body": ...}
-    return {"uid": uid, "subject": subject, "body": body}
+    return {"uid": uid, "subject": subject, "body": body, "client": client}
 
-def parse_body(raw_email):
+def parse_body(msg):
     if msg.is_multipart():
         # walk through the MIME parts
         for part in msg.walk():
@@ -62,6 +62,7 @@ def parse_body(raw_email):
 
 def archive(email):
     # move the email to the archive folder
+    client = email["client"]
     client.copy(email["uid"], "[Gmail]/All Mail")
     client.store(email["uid"], "+FLAGS", "\\Deleted")
     client.expunge()
