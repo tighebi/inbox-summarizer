@@ -16,6 +16,8 @@ def connect(host, port, username, password):
     return client
 
 def wait_for_new_email(client):
+    line = client.readline()
+    print(f"Server said: {line}")
     # tell the server to notify us when something changes (IMAP IDLE)
     client.send(b"a001 IDLE\r\n")
     # wait for a response from the server
