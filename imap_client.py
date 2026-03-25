@@ -67,9 +67,9 @@ def archive(email):
     client.store(email["uid"], "+FLAGS", "\\Deleted")
     client.expunge()
 
-def worker(host, port, username, password, email_queue):
+def worker(host, username, password, email_queue):
     # connect
-    client = connect(host, port, username, password)
+    client = connect(host, 933, username, password)
 
     while True:
         try:
@@ -81,4 +81,4 @@ def worker(host, port, username, password, email_queue):
             print(f"IMAP error: {e}")
             time.sleep(5)
             # reconnect
-            client = connect(host, port, username, password)
+            client = connect(host, 933, username, password)
