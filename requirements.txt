@@ -2,3 +2,5 @@ imapclient
 google-genai
 pyyaml
 beautifulsoup4
+pystray
+Pillow
