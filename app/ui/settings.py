@@ -62,11 +62,11 @@ def save_config(email, password, api_key, window):
     messagebox.showinfo("Saved", "Settings saved. Restart the app for changes to take effect.")
     window.destroy()
 
-def build_gui():
+def build_gui(root):
     # open config.yaml and pre-fill the fields with current values
     config = load_current_config()
 
-    window = tk.Tk()
+    window = tk.Toplevel(root)
     window.title("Settings")
     window.resizable(False, False)
 
