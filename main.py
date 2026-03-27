@@ -1,39 +1,43 @@
-import threading, queue, yaml, sys, os
+import threading
+import queue
+import yaml
+import os
+import sys
+
+# Reach into the folders
 from app.core import imap_client
 from app.ui import popup, tray
 
+# Ensure config.yaml is found in the root
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(BASE_DIR, "config.yaml")
 
-if not os.path.exists("config.yaml"):
-    print("No config.yaml found. Please run setup.py first.")
-    sys.exit(1)
+def load_config():
+    if not os.path.exists(CONFIG_PATH):
+        print("Error: config.yaml not found. Run setup.py first.")
+        sys.exit(1)
+    with open(CONFIG_PATH) as f:
+        return yaml.safe_load(f)
 
-with open("config.yaml") as f:
-    config = yaml.safe_load(f)
+config = load_config()
 
-# user details
-EMAIL_HOST = config["email"]["host"]
-EMAIL_USER = config["email"]["username"]
-EMAIL_PASS = config["email"]["password"]
-GEMINI_KEY = config["gemini"]["api_key"]
-
-# connects user to inbox
+# Setup logic 
 email_queue = queue.Queue()
 
-# runs the threading
 threading.Thread(
     target=imap_client.worker,
-    args=(EMAIL_HOST, EMAIL_USER, EMAIL_PASS, email_queue),
+    args=(
+        config["email"]["host"], 
+        config["email"]["username"], 
+        config["email"]["password"], 
+        email_queue
+    ),
     daemon=True
 ).start()
 
-# holds the reference to the tkinter popup window
 root = popup.init_tkinter()
+# Pass the GEMINI_KEY and the email login info
+root.after(1000, lambda: popup.check_queue(email_queue, config, root))
 
-# tkinter method that ties the queue from main and the popup logic
-root.after(1000, lambda: popup.check_queue(email_queue, GEMINI_KEY, root))
-
-#display in the tray
 tray.run_tray(root)
-
-# tkinter wakes up every second to run check_queue, and sleeps the rest of the time
 root.mainloop()
