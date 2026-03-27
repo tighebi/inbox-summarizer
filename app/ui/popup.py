@@ -44,16 +44,20 @@ def show(summary):
     tk.Button(btn_frame, text="Keep in Inbox", command=on_keep).pack(side="left", padx=8)
 
     # every second:
-    counter = [TIMEOUT]
+    remaining = TIMEOUT
     def tick():
-        counter[0] -= 1
-        countdown_label.config(text=f"Keeping in {counter[0]}s...")
-        if counter[0] <= 0:
-            on_keep()
+        nonlocal remaining
+        # Critical Fix: Stop the timer if the user already clicked a button
+        if not window.winfo_exists():
+            return
+            
+        remaining -= 1
+        countdown_label.config(text=f"Keeping in {remaining}s...")
+        
+        if remaining <= 0:
+            on_close("keep")
         else:
             window.after(1000, tick)
-
-    window.after(1000, tick)
 
     # wait for button click or timeout then return
     window.wait_window()
@@ -77,7 +81,7 @@ def check_queue(email_queue, config, root):
             
             # if action == "archive": archive it
             if action == "archive":
-                imap_client.archive(email["uid"], config)
+                imap_client.archive(email)
         # if there is some failure
         except Exception as e:
             print(f"Error processing email: {e}")
