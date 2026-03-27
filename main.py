@@ -1,5 +1,6 @@
 import threading, queue, yaml, sys, os
-import imap_client, popup, tray
+from app.core import imap_client
+from app.ui import popup, tray
 
 
 if not os.path.exists("config.yaml"):
