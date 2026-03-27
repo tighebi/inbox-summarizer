@@ -64,22 +64,23 @@ def show_error(message):
     messagebox.showerror("Inbox Summarizer", message)
 
 
-def check_queue(email_queue, api_key, root):
+def check_queue(email_queue, config, root):
     # if queue has an email:
     if not email_queue.empty():
-        # get the email
         email = email_queue.get()
         # summarize it
         try:
-            summary = summarizer.summarize(email, api_key)
-            #  show the popup with countdown
-            action = show(summary)
+            summary = summarizer.summarize(email, config["gemini"]["api_key"])
+            
+            # show the popup with countdown
+            action = show(summary, root)
+            
             # if action == "archive": archive it
             if action == "archive":
-                imap_client.archive(email)
+                imap_client.archive(email["uid"], config)
         # if there is some failure
         except Exception as e:
             print(f"Error processing email: {e}")
             show_error("Failed to process email.")
     # schedule itself to run again in 1 second
-    root.after(1000, lambda: check_queue(email_queue, api_key, root))
+    root.after(1000, lambda: check_queue(email_queue, config, root))

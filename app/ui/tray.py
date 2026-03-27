@@ -1,6 +1,7 @@
 import pystray
 from PIL import Image, ImageDraw
 import threading
+from app.ui import settings  # Updated import path
 
 def create_icon_image():
     # load or generate a small image for the tray icon
@@ -33,14 +34,14 @@ def get_menu(root):
     )
 
 def run_tray(root):
-    # create the icon image
-    image = create_icon_image()
-    # create the pystray.Icon with the image and menu
     icon = pystray.Icon(
         "inbox-summarizer",
-        image,
+        create_icon_image(),
         "Inbox Summarizer",
-        menu=get_menu(root)
+        menu=pystray.Menu(
+            # Notice the 'icon, item' added here to prevent TypeErrors
+            pystray.MenuItem("Settings", lambda icon, item: root.after(0, settings.open_settings_window, root)),
+            pystray.MenuItem("Quit", lambda icon, item: quit_app(icon, root))
+        )
     )
-    # run the icon in a background thread so it doesn't block tkinter
     threading.Thread(target=icon.run, daemon=True).start()
