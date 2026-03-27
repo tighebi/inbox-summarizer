@@ -4,7 +4,8 @@ import yaml
 import os
 from imapclient import IMAPClient
 
-REPO_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+CONFIG_PATH = os.path.join(BASE_DIR, "config.yaml")
 
 def load_current_config():
     # open config.yaml
@@ -69,6 +70,7 @@ def build_gui(root):
     window = tk.Toplevel(root)
     window.title("Settings")
     window.resizable(False, False)
+    window.attributes('-topmost', True)
 
     # show a window with three fields:
         # gmail address (pre-filled)

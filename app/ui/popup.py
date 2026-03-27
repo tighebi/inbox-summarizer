@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import summarizer
-import imap_client
+from app.core import summarizer, imap_client
 
 # time until window dissapears
 TIMEOUT = 15
