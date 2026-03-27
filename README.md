@@ -85,11 +85,6 @@ cp com.inboxsummarizer.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.inboxsummarizer.plist
 ```
 
-
----
-
-**Make those two quick parameter fixes to `popup.py` and `tray.py`, and you should be fully ready to run `python main.py` and test it.
-
 ---
 
 ## License
