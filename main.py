@@ -1,5 +1,5 @@
 import threading, queue, yaml
-import imap_client, summarizer, popup
+import imap_client, popup, tray
 
 
 with open("config.yaml") as f:
