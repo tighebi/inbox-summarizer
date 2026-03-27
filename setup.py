@@ -36,7 +36,7 @@ def validate_and_submit(email, password, api_key, window):
     write_config(email, password, api_key)
     install_service()
     window.destroy()
-    messagebox.showinfo("Inbox Summarizer is now running.\nYou'll see a popup when new emails arrive.")
+    messagebox.showinfo("All done", "Inbox Summarizer is now running.\nYou'll see a popup when new emails arrive.")
 
 # writes the yaml file with its values and chmod for safety if needed
 def write_config(email, password, api_key):
