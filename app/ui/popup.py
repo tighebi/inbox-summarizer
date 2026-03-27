@@ -55,7 +55,7 @@ def show(summary):
         countdown_label.config(text=f"Keeping in {remaining}s...")
         
         if remaining <= 0:
-            on_close("keep")
+            on_archive("keep")
         else:
             window.after(1000, tick)
 
