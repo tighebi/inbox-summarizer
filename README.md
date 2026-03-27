@@ -11,7 +11,7 @@ You will need:
 - A personal Gmail account (`.edu` accounts block the required access)
 - A Gemini API key — get one free at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 - A Gmail App Password — generate one at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) (requires 2FA enabled)
-- IMAP enabled in Gmail → Settings → See all settings → Forwarding and POP/IMAP → Enable IMAP
+- IMAP enabled in Gmail → Settings → See all settings → Forwarding and POP/IMAP → Enable IMAP (should be by default)
 
 ---
 
@@ -40,114 +40,10 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-**3. Create your config file**
-
-Linux / macOS:
+**3. Configuration**
 ```bash
-cp config.example.yaml config.yaml
+python setup.py
 ```
-
-Windows:
-```bash
-copy config.example.yaml config.yaml
-```
-
-Open `config.yaml` and fill in your details:
-```yaml
-email:
-  host: imap.gmail.com
-  port: 993
-  username: you@gmail.com
-  password: your_app_password
-
-gemini:
-  api_key: YOUR_GEMINI_API_KEY
-```
-
-**4. Lock down the config (Linux / macOS only)**
-```bash
-chmod 600 config.yaml
-```
-
----
-
-## Running Manually
-
-Linux / macOS:
-```bash
-source .venv/bin/activate
-python main.py
-```
-
-Windows:
-```bash
-.venv\Scripts\activate
-python main.py
-```
-
-Send yourself an email — a popup should appear within a few seconds.
-
----
-
-## Run on Startup
-
-### Linux (systemd)
-
-Create the service file:
-```bash
-mkdir -p ~/.config/systemd/user/
-nano ~/.config/systemd/user/inbox-summarizer.service
-```
-
-Paste this in, replacing `YOUR_USERNAME` with your actual username:
-```ini
-[Unit]
-Description=Inbox Summarizer
-
-[Service]
-ExecStart=/home/YOUR_USERNAME/Documents/coding/inbox-summarizer/.venv/bin/python /home/YOUR_USERNAME/Documents/coding/inbox-summarizer/main.py
-WorkingDirectory=/home/YOUR_USERNAME/Documents/coding/inbox-summarizer
-Environment="DISPLAY=:0"
-Environment="XAUTHORITY=%h/.Xauthority"
-Restart=on-failure
-
-[Install]
-WantedBy=default.target
-```
-
-Enable it:
-```bash
-systemctl --user enable inbox-summarizer
-systemctl --user start inbox-summarizer
-```
-
-Check it's running:
-```bash
-systemctl --user status inbox-summarizer
-```
-
-### macOS (launchd)
-
-Your `.plist` must include `LimitLoadToSessionType` set to `Aqua`, otherwise macOS blocks the popup from rendering:
-```xml
-<key>LimitLoadToSessionType</key>
-<string>Aqua</string>
-```
-
-Then load it:
-```bash
-cp com.inboxsummarizer.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/com.inboxsummarizer.plist
-```
-
-### Windows (Task Scheduler)
-
-Run the included setup script:
-```bash
-python setup_windows_task.py
-```
-
-When setting up the task, make sure it is set to "Run only when user is logged on" — otherwise Windows will hide the popup.
 
 ---
 
@@ -155,17 +51,44 @@ When setting up the task, make sure it is set to "Run only when user is logged o
 
 ```
 inbox-summarizer/
-├── main.py                    # Entry point
-├── imap_client.py             # IMAP connection, IDLE, fetch, archive
-├── summarizer.py              # Gemini API integration
-├── popup.py                   # Desktop popup (tkinter)
-├── config.yaml                # Your local config (gitignored)
-├── config.example.yaml        # Template for config
-├── setup_windows_task.py      # Windows autostart setup
-├── inbox-summarizer.service   # Linux systemd unit file
-├── com.inboxsummarizer.plist  # macOS launchd plist
-└── requirements.txt
+├── app/
+│   ├── core/                  # Background Logic & AI
+│   │   ├── imap_client.py     # Thread-safe IMAP connection & archiving
+│   │   └── summarizer.py      # Gemini API integration & rate-limit handling
+│   └── ui/                    # User Interface
+│       ├── popup.py           # Tkinter auto-closing desktop notifications
+│       ├── settings.py        # Configuration management GUI
+│       └── tray.py            # System tray icon and background lifecycle
+├── main.py                    # Application Entry Point
+├── setup.py                   # Initial Setup/Installation Wizard
+├── config.example.yaml        # Template for user configuration
+└── requirements.txt           # Python dependencies
 ```
+
+---
+
+### Running in the Background
+
+Linux (systemd)
+Check it's running via:
+
+```bash
+systemctl --user status inbox-summarizer
+```
+
+macOS (launchd)
+
+Your .plist must include LimitLoadToSessionType set to Aqua, otherwise macOS blocks the popup from rendering.
+
+```bash
+cp com.inboxsummarizer.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.inboxsummarizer.plist
+```
+
+
+---
+
+**Make those two quick parameter fixes to `popup.py` and `tray.py`, and you should be fully ready to run `python main.py` and test it.
 
 ---
 
