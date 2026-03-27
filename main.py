@@ -27,5 +27,8 @@ root = popup.init_tkinter()
 # tkinter method that ties the queue from main and the popup logic
 root.after(1000, lambda: popup.check_queue(email_queue, GEMINI_KEY, root))
 
+#display in the tray
+tray.run_tray(root)
+
 # tkinter wakes up every second to run check_queue, and sleeps the rest of the time
 root.mainloop()
