@@ -1,6 +1,10 @@
-import threading, queue, yaml
+import threading, queue, yaml, sys, os
 import imap_client, popup, tray
 
+
+if not os.path.exists("config.yaml"):
+    print("No config.yaml found. Please run setup.py first.")
+    sys.exit(1)
 
 with open("config.yaml") as f:
     config = yaml.safe_load(f)
