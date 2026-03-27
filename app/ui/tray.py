@@ -1,7 +1,8 @@
 import pystray
 from PIL import Image, ImageDraw
 import threading
-from app.ui import settings  # Updated import path
+from app.ui import settings
+
 
 def create_icon_image():
     # load or generate a small image for the tray icon
@@ -19,19 +20,8 @@ def quit_app(icon, item, root):
     root.after(0,root.destroy)
 
 def open_settings(icon, item, root):
-    # open the settings window (settings.py)
-    import settings
     # run it in a way that doesn't block the tray
     threading.Thread(target=settings.open, daemon=True).start()
-
-def get_menu(root):
-    # return a pystray.Menu with two items:
-    return pystray.Menu(
-        # "Settings" -> calls open_settings
-        pystray.MenuItem("Settings", open_settings),
-        # "Quit" -> calls quit_app
-        pystray.MenuItem("Quit", lambda icon, item: quit_app(icon, item, root))
-    )
 
 def run_tray(root):
     icon = pystray.Icon(
@@ -40,8 +30,8 @@ def run_tray(root):
         "Inbox Summarizer",
         menu=pystray.Menu(
             # Notice the 'icon, item' added here to prevent TypeErrors
-            pystray.MenuItem("Settings", lambda icon, item: root.after(0, settings.open_settings_window, root)),
-            pystray.MenuItem("Quit", lambda icon, item: quit_app(icon, root))
+            pystray.MenuItem("Settings", lambda icon, item: root.after(0, settings.open_settings(icon,item,root), root)),
+            pystray.MenuItem("Quit", lambda icon, item: quit_app(icon, item, root))
         )
     )
     threading.Thread(target=icon.run, daemon=True).start()

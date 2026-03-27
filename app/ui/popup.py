@@ -73,7 +73,7 @@ def check_queue(email_queue, config, root):
             summary = summarizer.summarize(email, config["gemini"]["api_key"])
             
             # show the popup with countdown
-            action = show(summary, root)
+            action = show(summary)
             
             # if action == "archive": archive it
             if action == "archive":

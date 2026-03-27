@@ -9,8 +9,7 @@ CONFIG_PATH = os.path.join(BASE_DIR, "config.yaml")
 
 def load_current_config():
     # open config.yaml
-    config_path = os.path.join(CONFIG_PATH, "config.yaml")
-    with open(config_path) as f:
+    with open(CONFIG_PATH) as f:
     # return the config dictionary
         return yaml.safe_load(f)
     
@@ -55,8 +54,7 @@ def save_config(email, password, api_key, window):
             "api_key": api_key
         }
     }
-    config_path = os.path.join(CONFIG_PATH, "config.yaml")
-    with open(config_path, "w") as f:
+    with open(CONFIG_PATH, "w") as f:
         yaml.dump(config, f)
 
     # show success message
@@ -111,6 +109,3 @@ def build_gui(root):
     ).pack(side="left", padx=8)
 
     window.mainloop()
-
-def open():
-    build_gui()
